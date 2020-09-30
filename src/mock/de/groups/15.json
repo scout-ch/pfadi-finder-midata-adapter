@@ -1,0 +1,63 @@
+{
+  "groups": [
+    {
+      "id": "15",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/15.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Stärn vo Buebeberg",
+      "short_name": null,
+      "email": "rosario@example.net",
+      "address": "Rennbaumplatz 4",
+      "zip_code": 1045,
+      "town": "Neumannburg",
+      "country": null,
+      "pbs_shortname": "BE15",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "8",
+        "layer_group": "15",
+        "hierarchies": ["1", "2", "8", "15"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "8", "name": "Berner Oberland", "group_type": "Gruppe" },
+      { "id": "15", "name": "Stärn vo Buebeberg", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "8", "name": "Berner Oberland", "group_type": "Region" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}

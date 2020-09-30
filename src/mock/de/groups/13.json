@@ -1,0 +1,73 @@
+{
+  "groups": [
+    {
+      "id": "13",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/13.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Schekka",
+      "short_name": null,
+      "email": "brenna_mccullough@example.com",
+      "address": "Im Hederichsfeld 381",
+      "zip_code": 2152,
+      "town": "Buchruckerscheid",
+      "country": null,
+      "pbs_shortname": "BE13",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "7",
+        "layer_group": "13",
+        "hierarchies": ["1", "2", "7", "13"],
+        "children": ["20", "29", "37", "39", "22", "28", "34", "33", "21"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "7", "name": "Stadt Bern", "group_type": "Gruppe" },
+      { "id": "13", "name": "Schekka", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "7", "name": "Stadt Bern", "group_type": "Region" },
+      { "id": "20", "name": "Biber", "group_type": "Biber" },
+      { "id": "29", "name": "Bäreried", "group_type": "Pfadi" },
+      { "id": "37", "name": "Elternrat", "group_type": "Elternrat" },
+      { "id": "39", "name": "Fussballers", "group_type": "Gremium" },
+      { "id": "22", "name": "Hathi", "group_type": "Wölfe" },
+      { "id": "28", "name": "Pegasus", "group_type": "Pfadi" },
+      { "id": "34", "name": "Rovers", "group_type": "Rover" },
+      { "id": "33", "name": "Sparta", "group_type": "Pio" },
+      { "id": "21", "name": "Sunnewirbu", "group_type": "Wölfe" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}

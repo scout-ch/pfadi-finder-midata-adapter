@@ -1,0 +1,10 @@
+<?php
+
+$config = [
+  'BASE_URL' => $_ENV['BASE_URL'],
+  'TOKEN' => $_ENV['TOKEN'],
+  'DATABASE_HOST' => $_ENV['DATABASE_HOST'],
+  'DATABASE_USER' => $_ENV['DATABASE_USER'],
+  'DATABASE_PASSWORD' => $_ENV['DATABASE_PASSWORD'],
+  'DATABASE_DB' => $_ENV['DATABASE_DB']
+];

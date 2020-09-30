@@ -1,0 +1,65 @@
+{
+  "groups": [
+    {
+      "id": "12",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/12.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Schweizerstern",
+      "short_name": null,
+      "email": "jayda_emmerich@example.org",
+      "address": "Wolf-Vostell-Str. 922",
+      "zip_code": 3375,
+      "town": "Süd Alexandrastadt",
+      "country": null,
+      "pbs_shortname": "BE12",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "7",
+        "layer_group": "12",
+        "hierarchies": ["1", "2", "7", "12"],
+        "children": ["36"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "7", "name": "Stadt Bern", "group_type": "Gruppe" },
+      { "id": "12", "name": "Schweizerstern", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "7", "name": "Stadt Bern", "group_type": "Region" },
+      { "id": "36", "name": "Elternrat", "group_type": "Elternrat" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}

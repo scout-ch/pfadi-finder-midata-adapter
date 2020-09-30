@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ["php", "-S", "0.0.0.0:3000", "-t", "/app/src"]
+    ports:
+      - "5000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_USER: pf
+      DATABASE_PASSWORD: pf
+      DATABASE_DB: pfadi_finder
+      TOKEN: ${TOKEN}
+      BASE_URL: ${BASE_URL:-./mock}
+      DEBUG: ${DEBUG:-yes}
+
+  db:
+    image: mariadb:10.5
+    environment:
+      MYSQL_DATABASE: pfadi_finder
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_USER: pf
+      MYSQL_PASSWORD: pf
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:

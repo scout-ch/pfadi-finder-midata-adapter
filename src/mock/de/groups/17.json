@@ -1,0 +1,69 @@
+{
+  "groups": [
+    {
+      "id": "17",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/17.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Berchtold",
+      "short_name": null,
+      "email": "johan@example.net",
+      "address": "Peschstr. 956",
+      "zip_code": 7921,
+      "town": "Hedermannscheid",
+      "country": null,
+      "pbs_shortname": "BE17",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "10",
+        "layer_group": "17",
+        "hierarchies": ["1", "2", "8", "10", "17"],
+        "children": ["23", "24", "38", "30"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "10", "name": "Verband Kyburg Thun", "group_type": "Gruppe" },
+      { "id": "17", "name": "Berchtold", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "8", "name": "Berner Oberland", "group_type": "Region" },
+      { "id": "10", "name": "Verband Kyburg Thun", "group_type": "Region" },
+      { "id": "23", "name": "Aries", "group_type": "Wölfe" },
+      { "id": "24", "name": "Castor", "group_type": "Wölfe" },
+      { "id": "38", "name": "Elternrat", "group_type": "Elternrat" },
+      { "id": "30", "name": "Schloss", "group_type": "Pfadi" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}

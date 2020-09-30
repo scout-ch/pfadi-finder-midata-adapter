@@ -1,0 +1,64 @@
+{
+  "groups": [
+    {
+      "id": "18",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/18.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Virus",
+      "short_name": null,
+      "email": "morris@example.org",
+      "address": "Im Kalkfeld 36c",
+      "zip_code": 2165,
+      "town": "Ost Abigailburg",
+      "country": null,
+      "pbs_shortname": "BE18",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "10",
+        "layer_group": "18",
+        "hierarchies": ["1", "2", "8", "10", "18"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "10", "name": "Verband Kyburg Thun", "group_type": "Gruppe" },
+      { "id": "18", "name": "Virus", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "8", "name": "Berner Oberland", "group_type": "Region" },
+      { "id": "10", "name": "Verband Kyburg Thun", "group_type": "Region" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}

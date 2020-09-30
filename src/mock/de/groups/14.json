@@ -1,0 +1,63 @@
+{
+  "groups": [
+    {
+      "id": "14",
+      "type": "groups",
+      "href": "http://192.168.96.5:3000/de/groups/14.json",
+      "group_type": "Abteilung",
+      "layer": true,
+      "name": "Unspunne",
+      "short_name": null,
+      "email": "dimitri@example.net",
+      "address": "Grunder Wiesen 356",
+      "zip_code": 6525,
+      "town": "Antondorf",
+      "country": null,
+      "pbs_shortname": "BE14",
+      "website": "https://pfadi.swiss",
+      "bank_account": null,
+      "pta": false,
+      "vkp": false,
+      "pbs_material_insurance": false,
+      "description": null,
+      "gender": null,
+      "try_out_day_at": null,
+      "links": {
+        "parent": "8",
+        "layer_group": "14",
+        "hierarchies": ["1", "2", "8", "14"]
+      }
+    }
+  ],
+  "linked": {
+    "groups": [
+      { "id": "8", "name": "Berner Oberland", "group_type": "Gruppe" },
+      { "id": "14", "name": "Unspunne", "group_type": "Abteilung" },
+      { "id": "1", "name": "Pfadibewegung Schweiz", "group_type": "Bund" },
+      { "id": "2", "name": "Bern", "group_type": "Kantonalverband" },
+      { "id": "8", "name": "Berner Oberland", "group_type": "Region" }
+    ]
+  },
+  "links": {
+    "groups.parent": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.parent}.json",
+      "type": "groups"
+    },
+    "groups.layer_group": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.layer_group}.json",
+      "type": "groups"
+    },
+    "groups.hierarchy": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.hierarchy}.json",
+      "type": "groups"
+    },
+    "groups.children": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.children}.json",
+      "type": "groups"
+    },
+    "groups.people": {
+      "href": "http://192.168.96.5:3000/de/groups/{groups.id}/people.json",
+      "type": "people"
+    }
+  }
+}
