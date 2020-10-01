@@ -24,31 +24,31 @@ class PfadiFinderAdapter {
 
   function __construct($config) {
     $this->config = $config;
-    $this->connect();
-
-    if(!$this->connection) {
-      die(mysqli_error());
-    }
+    $this->connection = $this->connect();
   }
 
   function connect() {
-    $this->connection = new mysqli($this->config['DATABASE_HOST'], 
-                                   $this->config['DATABASE_USER'], 
-                                   $this->config['DATABASE_PASSWORD'], 
-                                   $this->config['DATABASE_DB']);
+    return mysqli_connect($this->config['DATABASE_HOST'], 
+                          $this->config['DATABASE_USER'], 
+                          $this->config['DATABASE_PASSWORD'], 
+                          $this->config['DATABASE_DB']);
   }
 
   function insertDivision($division) {
-    $stmt = $this->connection->prepare("INSERT INTO `divisions` (code, name, cantonalassociation, gender, pta, website, agegroups, email) 
-                                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $this->connection->prepare("INSERT INTO `divisions` (code, name, cantonalassociation, gender, pta, website, agegroups, email, mainpostalcode, allpostalcodes) 
+                                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, '')");
     $stmt->bind_param("sssiisss", $division['id'], $division['name'], $division['kv'], $division['genders'], $division['pta'], $division['website'], $division['agegroups'], $division['email']);
     $stmt->execute();
   }
 
   function insertLocations($division) {
     $stmt = $this->connection->prepare("INSERT INTO `locations` (code, latitude, longitude) VALUES (?, ?, ?)");
-    $stmt->bind_param("sdd", $division['id'], 0.0, 0.0);
-    $stmt->execute();
+
+    foreach($division['locations'] as $location) {
+      $stmt->bind_param("sdd", $division['id'], $location['latitude'], $location['longitude']);
+      $stmt->execute();
+      $stmt->reset();
+    }
   }
 
   function clearDivision($division) {
@@ -97,7 +97,7 @@ class MidataAdapter {
   function transform($data) {
     return [
       'id' => $data['pbs_shortname'], 'name' => $data['name'], 'kv' => substr($data['pbs_shortname'], 0, 2), 'genders' => $this->mapGenders($data), 
-      'pta' => !!$data['pta'], 'website' => $data['website'], 'email' => $data['email'], 'agegroups' => $this->mapAgeGroups($data)
+      'pta' => !!$data['pta'], 'website' => $data['website'], 'email' => $data['email'], 'agegroups' => $this->mapAgeGroups($data), 'locations' => $this->mapLocations($data)
     ];
   }
 
@@ -115,6 +115,10 @@ class MidataAdapter {
 
   function mapAgeGroups($data) {
     return "";
+  }
+
+  function mapLocations($data) {
+    return [];
   }
 
   function mapGenders($data) {
