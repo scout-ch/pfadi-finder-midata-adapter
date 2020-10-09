@@ -45,7 +45,7 @@ class PfadiFinderAdapter {
     $stmt = $this->connection->prepare("INSERT INTO `locations` (code, latitude, longitude) VALUES (?, ?, ?)");
 
     foreach($division['locations'] as $location) {
-      $stmt->bind_param("sdd", $division['id'], $location['latitude'], $location['longitude']);
+      $stmt->bind_param("sdd", $division['id'], $location['lat'], $location['long']);
       $stmt->execute();
       $stmt->reset();
     }
@@ -64,9 +64,21 @@ class PfadiFinderAdapter {
   function processDivision($division) {
     if ($division == null) return;
 
-    $this->clearDivision($division);
-    $this->insertDivision($division);
-    $this->insertLocations($division);
+    if ($this->clearDivision($division) && 
+        $this->insertDivision($division) && 
+        $this->insertLocations($division)) {
+          return [
+            'id' => $division['id'],
+            'data' => $division,
+            'ok' => true
+          ];
+        }
+
+    return [
+      'id' => $division['id'],
+      'data' => $division,
+      'ok' => false
+    ];
   }
 }
 
@@ -83,7 +95,7 @@ class MidataAdapter {
     $url = $this->config['BASE_URL'] . "/de/groups/$id.json" . $token;
     $data = file_get_contents($url);
 
-    if($data) return json_decode($data, true)['groups'][0];
+    if($data) return json_decode($data, true);
   }
 
   function fetchIndex() {
@@ -91,20 +103,22 @@ class MidataAdapter {
     $url = $this->config['BASE_URL'] . "/de/list_groups.json" . $token;
     $data = file_get_contents($url);
 
-    if($data) return json_decode($data, true)['groups'];
+    if($data) return json_decode($data, true);
   }
 
   function transform($data) {
+    $div = $data['groups'][0];
+
     return [
-      'id' => $data['pbs_shortname'], 'name' => $data['name'], 'kv' => substr($data['pbs_shortname'], 0, 2), 'genders' => $this->mapGenders($data), 
-      'pta' => !!$data['pta'], 'website' => $data['website'], 'email' => $data['email'], 'agegroups' => $this->mapAgeGroups($data), 'locations' => $this->mapLocations($data)
+      'id' => $div['pbs_shortname'], 'name' => $div['name'], 'kv' => substr($div['pbs_shortname'], 0, 2), 'genders' => $this->mapGenders($div), 
+      'pta' => !!$div['pta'], 'website' => $div['website'], 'email' => $div['email'], 'agegroups' => $this->mapAgeGroups($div), 'locations' => $data['linked']['geolocations']
     ];
   }
 
   function fetchAll() {
     $divisions = [];
     $divisionIndex = $this->fetchIndex();
-    foreach($divisionIndex as $divisionListing) {
+    foreach($divisionIndex['groups'] as $divisionListing) {
       if ($divisionListing['type'] != 'Group::Abteilung') continue;
 
       $divisions[] = $this->transform($this->fetch($divisionListing['id']));
@@ -117,10 +131,6 @@ class MidataAdapter {
     return "";
   }
 
-  function mapLocations($data) {
-    return [];
-  }
-
   function mapGenders($data) {
     if ($data['gender'] == 'w') return 1;
     if ($data['gender'] == 'm') return 2;
@@ -131,8 +141,12 @@ class MidataAdapter {
 
 $midataAdapter = new MidataAdapter($config);
 $pfadiFinderAdapter = new PfadiFinderAdapter($config);
+$result = [];
 
 $divisions = $midataAdapter->fetchAll();
 foreach($divisions as $division) {
-  $pfadiFinderAdapter->processDivision($division);
+  $result[] = $pfadiFinderAdapter->processDivision($division);
 }
+
+header('Content-Type: application/json; charset=UTF-8');
+print(json_encode($result));

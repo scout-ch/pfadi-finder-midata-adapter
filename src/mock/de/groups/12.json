@@ -31,6 +31,7 @@
     }
   ],
   "linked": {
+    "geolocations": [{ "id": "12", "lat": "47.00588", "long": "7.98357" }],
     "groups": [
       { "id": "7", "name": "Stadt Bern", "group_type": "Gruppe" },
       { "id": "12", "name": "Schweizerstern", "group_type": "Abteilung" },

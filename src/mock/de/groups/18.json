@@ -30,6 +30,7 @@
     }
   ],
   "linked": {
+    "geolocations": [{ "id": "12", "lat": "47.00588", "long": "7.98357" }],
     "groups": [
       { "id": "10", "name": "Verband Kyburg Thun", "group_type": "Gruppe" },
       { "id": "18", "name": "Virus", "group_type": "Abteilung" },

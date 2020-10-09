@@ -30,6 +30,7 @@
     }
   ],
   "linked": {
+    "geolocations": [{ "id": "12", "lat": "47.00588", "long": "7.98357" }],
     "groups": [
       { "id": "8", "name": "Berner Oberland", "group_type": "Gruppe" },
       { "id": "14", "name": "Unspunne", "group_type": "Abteilung" },
