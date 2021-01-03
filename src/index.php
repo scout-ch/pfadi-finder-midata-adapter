@@ -34,132 +34,74 @@ class PfadiFinderAdapter {
                           $this->config['DATABASE_DB']);
   }
 
-  function insertDivision($division) {
-    $stmt = $this->connection->prepare("INSERT INTO `divisions` (code, name, cantonalassociation, gender, pta, website, agegroups, email, mainpostalcode, allpostalcodes) 
-                                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, '')");
-    $stmt->bind_param("sssiisss", $division['id'], $division['name'], $division['kv'], $division['genders'], $division['pta'], $division['website'], $division['agegroups'], $division['email']);
+  function loadEntriesFromDB(){
+    $stmt = $this->connection->prepare("SELECT * FROM divisions;");
     $stmt->execute();
-  }
+    $result = $stmt->get_result();
 
-  function insertLocations($division) {
-    $stmt = $this->connection->prepare("INSERT INTO `locations` (code, latitude, longitude) VALUES (?, ?, ?)");
-
-    foreach($division['locations'] as $location) {
-      $stmt->bind_param("sdd", $division['id'], $location['lat'], $location['long']);
-      $stmt->execute();
-      $stmt->reset();
-    }
-  }
-
-  function clearDivision($division) {
-    if($stmt = $this->connection->prepare("DELETE FROM `locations` WHERE code = ?")){
-      $stmt->bind_param("s", $division['id']);
-      $stmt->execute();
-    }else{
-      print_r($this->connection->error);
+    $data = [];
+    while($row = $result->fetch_assoc()){
+      $data[] = $row;
     }
 
-    if($stmt = $this->connection->prepare("DELETE FROM `divisions` WHERE code = ?")){
-      $stmt->bind_param("s", $division['id']);
-      $stmt->execute();
-    }else{
-      print_r($this->connection->error);
-    }
+    return $data;
   }
 
-  function processDivision($division) {
-    if ($division == null) return;
+  function loadLocationsFromDB($data){
+    $stmt = $this->connection->prepare("SELECT * FROM locations WHERE code = ?;");
+    $stmt->bind_param("s", $data['code']);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($this->clearDivision($division) && 
-      $this->insertDivision($division) &&
-      $this->insertLocations($division)) {
-        return [
-          'id' => $division['id'],
-          'data' => $division,
-          'ok' => true
-        ];
+    $locations = [];
+    while($row = $result->fetch_assoc()){
+      $locations[] = $row;
     }
 
-    return [
-      'id' => $division['id'],
-      'data' => $division,
-      'ok' => false
-    ];
-  }
-}
-
-class MidataAdapter {
-  private $config;
-
-  function __construct($config) {
-    $this->config = $config;
+    return $locations;
   }
 
-  function fetch($id) {
-    $token = $this->config['TOKEN'] ? "?token=" . $this->config['TOKEN'] : "";
-    $url = $this->config['BASE_URL'] . "/de/groups/$id.json" . $token;
-    $data = file_get_contents($url);
+  function transform($data, $locations) {
+    $formatLocations = [];
 
-    if($data) return json_decode($data, true);
-  }
-
-  function fetchIndex() {
-    $token = $this->config['TOKEN'] ? "?token=" . $this->config['TOKEN'] : "";
-    $url = $this->config['BASE_URL'] . "/de/list_groups.json" . $token;
-    $data = file_get_contents($url);
-
-    if($data) return json_decode($data, true);
-  }
-
-  function transform($data) {
-    $div = $data['groups'][0];
+    foreach($locations as $location){
+      $formatLocations[] = [
+        'id' => $location['code'],
+        'lat' => $location['latitude'],
+        'long' => $location['longitude'],
+      ];
+    }
 
     $divArray = [
-      'id' => $div['pbs_shortname'],
-      'name' => $div['name'],
-      'kv' => substr($div['pbs_shortname'], 0, 2),
-      'genders' => $this->mapGenders($div),
-      'pta' => !!$div['pta'],
-      'website' => $div['website'],
-      'email' => $div['email'],
-      'agegroups' => $this->mapAgeGroups($div),
-      'locations' => $data['linked']['geolocations']
+      'id' => $data['code'],
+      'name' => $data['name'],
+      'kv' => $data['cantonalassociation'],
+      'genders' => $data['gender'],
+      'pta' => !!$data['pta'],
+      'website' => $data['website'],
+      'email' => $data['email'],
+      'agegroups' => $data['agegroups'],
+      'locations' => $formatLocations,
     ];
 
     return $divArray;
   }
-
-  function fetchAll() {
-    $divisions = [];
-    $divisionIndex = $this->fetchIndex();
-    foreach($divisionIndex['groups'] as $divisionListing) {
-      if ($divisionListing['type'] != 'Group::Abteilung') continue;
-
-      $divisions[] = $this->transform($this->fetch($divisionListing['id']));
-    }
-
-    return $divisions;
-  }
-
-  function mapAgeGroups($data) {
-    return "";
-  }
-
-  function mapGenders($data) {
-    if ($data['gender'] == 'w') return 1;
-    if ($data['gender'] == 'm') return 2;
-    return 3;
-  }
 }
 
-$midataAdapter = new MidataAdapter($config);
 $pfadiFinderAdapter = new PfadiFinderAdapter($config);
-$result = [];
+$entries = $pfadiFinderAdapter->loadEntriesFromDB();
 
-$divisions = $midataAdapter->fetchAll();
-foreach($divisions as $division) {
-  $result[] = $pfadiFinderAdapter->processDivision($division);
+$container = [];
+foreach($entries as $entry){
+  $locations = $pfadiFinderAdapter->loadLocationsFromDB($entry);
+  $item = $pfadiFinderAdapter->transform($entry, $locations);
+
+  $container[] = [
+    'id' => $entry['code'],
+    'data' => $item,
+    'ok' => true
+  ];
 }
 
 header('Content-Type: application/json; charset=UTF-8');
-print(json_encode($result));
+print(json_encode($container));
