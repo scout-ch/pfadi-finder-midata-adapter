@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS `divisions` (
   `allpostalcodes` varchar(255) NOT NULL,
   `gender` int(11) NOT NULL,
   `pta` tinyint(1) NOT NULL,
-  `website` varchar(255) NOT NULL,
-  `agegroups` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `website` varchar(255) DEFAULT NULL,
+  `agegroups` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
