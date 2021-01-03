@@ -28,9 +28,9 @@ class PfadiFinderAdapter {
   }
 
   function connect() {
-    return mysqli_connect($this->config['DATABASE_HOST'], 
-                          $this->config['DATABASE_USER'], 
-                          $this->config['DATABASE_PASSWORD'], 
+    return mysqli_connect($this->config['DATABASE_HOST'],
+                          $this->config['DATABASE_USER'],
+                          $this->config['DATABASE_PASSWORD'],
                           $this->config['DATABASE_DB']);
   }
 
@@ -52,27 +52,33 @@ class PfadiFinderAdapter {
   }
 
   function clearDivision($division) {
-    $stmt = $this->connection->prepare("DELETE FROM `locations` WHERE code = ?");
-    $stmt->bind_param("s", $division['id']); 
-    $stmt->execute();
+    if($stmt = $this->connection->prepare("DELETE FROM `locations` WHERE code = ?")){
+      $stmt->bind_param("s", $division['id']);
+      $stmt->execute();
+    }else{
+      print_r($this->connection->error);
+    }
 
-    $stmt = $this->connection->prepare("DELETE FROM `divisions` WHERE code = ?");
-    $stmt->bind_param("s", $division['id']); 
-    $stmt->execute();
+    if($stmt = $this->connection->prepare("DELETE FROM `divisions` WHERE code = ?")){
+      $stmt->bind_param("s", $division['id']);
+      $stmt->execute();
+    }else{
+      print_r($this->connection->error);
+    }
   }
 
   function processDivision($division) {
     if ($division == null) return;
 
     if ($this->clearDivision($division) && 
-        $this->insertDivision($division) && 
-        $this->insertLocations($division)) {
-          return [
-            'id' => $division['id'],
-            'data' => $division,
-            'ok' => true
-          ];
-        }
+      $this->insertDivision($division) &&
+      $this->insertLocations($division)) {
+        return [
+          'id' => $division['id'],
+          'data' => $division,
+          'ok' => true
+        ];
+    }
 
     return [
       'id' => $division['id'],
@@ -88,7 +94,6 @@ class MidataAdapter {
   function __construct($config) {
     $this->config = $config;
   }
-
 
   function fetch($id) {
     $token = $this->config['TOKEN'] ? "?token=" . $this->config['TOKEN'] : "";
@@ -109,10 +114,19 @@ class MidataAdapter {
   function transform($data) {
     $div = $data['groups'][0];
 
-    return [
-      'id' => $div['pbs_shortname'], 'name' => $div['name'], 'kv' => substr($div['pbs_shortname'], 0, 2), 'genders' => $this->mapGenders($div), 
-      'pta' => !!$div['pta'], 'website' => $div['website'], 'email' => $div['email'], 'agegroups' => $this->mapAgeGroups($div), 'locations' => $data['linked']['geolocations']
+    $divArray = [
+      'id' => $div['pbs_shortname'],
+      'name' => $div['name'],
+      'kv' => substr($div['pbs_shortname'], 0, 2),
+      'genders' => $this->mapGenders($div),
+      'pta' => !!$div['pta'],
+      'website' => $div['website'],
+      'email' => $div['email'],
+      'agegroups' => $this->mapAgeGroups($div),
+      'locations' => $data['linked']['geolocations']
     ];
+
+    return $divArray;
   }
 
   function fetchAll() {
@@ -137,7 +151,6 @@ class MidataAdapter {
     return 3;
   }
 }
-
 
 $midataAdapter = new MidataAdapter($config);
 $pfadiFinderAdapter = new PfadiFinderAdapter($config);
