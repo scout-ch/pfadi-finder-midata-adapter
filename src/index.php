@@ -35,9 +35,11 @@ class PfadiFinderAdapter {
   }
 
   function insertDivision($division) {
-    $stmt = $this->connection->prepare("INSERT INTO `divisions` (code, name, cantonalassociation, gender, pta, website, agegroups, email, mainpostalcode, allpostalcodes) 
-                                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, '')");
-    $stmt->bind_param("sssiisss", $division['id'], $division['name'], $division['kv'], $division['genders'], $division['pta'], $division['website'], $division['agegroups'], $division['email']);
+    $stmt = $this->connection->prepare("INSERT INTO `divisions` (code, name, cantonalassociation, gender, pta, 
+                                        website, agegroups, email, mainpostalcode, allpostalcodes) 
+                                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, '')");
+    $stmt->bind_param("sssiisss", $division['id'], $division['name'], $division['kv'], $division['genders'], 
+                      $division['pta'], $division['website'], $division['agegroups'], $division['email']);
     $stmt->execute();
   }
 
@@ -107,11 +109,13 @@ class MidataAdapter {
   }
 
   function transform($data) {
-    $div = $data['groups'][0];
+    $group = $data['groups'][0];
 
     return [
-      'id' => $div['pbs_shortname'], 'name' => $div['name'], 'kv' => substr($div['pbs_shortname'], 0, 2), 'genders' => $this->mapGenders($div), 
-      'pta' => !!$div['pta'], 'website' => $div['website'], 'email' => $div['email'], 'agegroups' => $this->mapAgeGroups($div), 'locations' => $data['linked']['geolocations']
+      'id' => $group['pbs_shortname'], 'name' => $group['name'], 'kv' => substr($group['pbs_shortname'], 0, 2), 
+      'genders' => $this->mapGenders($group), 'pta' => !!$group['pta'], 'website' => $group['website'], 
+      'email' => $group['email'], 'agegroups' => $this->mapAgeGroups($data['linked']['groups']), 
+      'locations' => $data['linked']['geolocations']
     ];
   }
 
@@ -127,8 +131,13 @@ class MidataAdapter {
     return $divisions;
   }
 
-  function mapAgeGroups($data) {
-    return "";
+  function mapAgeGroups($groups) {
+    if(!$groups) return '';
+
+    $ageGroups = array_map(function ($group) { return ['Biber' => 0, 'Wölfe' => 1, 'Pfadi' => 2, 'Pio' => 3, 'Rover' => 4][$group['group_type']]; }, $groups);
+    $ageGroups = array_filter($ageGroups, function ($ageGroup) { return $ageGroup != null; });
+    $ageGroups = array_unique($ageGroups);
+    return join(', ', $ageGroups);
   }
 
   function mapGenders($data) {
