@@ -79,16 +79,16 @@ function mapGenders($data) {
   return 3;
 }
 
-function selectDivision($connection, $hours = 24) {
+function selectDivision($connection, $minage) {
   return intval($connection->query("SELECT `pbs_id` FROM `divisions` 
                                     WHERE `updated_at` IS NULL
-                                    OR `updated_at` < DATE_SUB(NOW(), INTERVAL $hours HOUR) 
+                                    OR `updated_at` < DATE_SUB(NOW(), INTERVAL $minage HOUR) 
                                     ORDER BY RAND() LIMIT 1;")->fetch_row()[0]) ;
 }
 
 header('Content-Type: application/json; charset=UTF-8');
 
 $connection = connect($config);
-$id = selectDivision($connection);
+$id = selectDivision($connection, ($config['MINAGE'] || 24));
 
 print(json_encode(processDivision($id, $config, $connection)));
