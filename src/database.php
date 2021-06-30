@@ -19,8 +19,10 @@
 include './config.php';
 
 function connect($config) {
-  return mysqli_connect($config['DATABASE_HOST'], 
-                        $config['DATABASE_USER'], 
-                        $config['DATABASE_PASSWORD'], 
-                        $config['DATABASE_DB']);
+  $connection = mysqli_connect($config['DATABASE_HOST'], 
+                               $config['DATABASE_USER'], 
+                               $config['DATABASE_PASSWORD'], 
+                               $config['DATABASE_DB']);
+  $connection->set_charset('utf8mb4');
+  return $connection;
 }
