@@ -89,6 +89,6 @@ function selectDivision($connection, $minage) {
 header('Content-Type: application/json; charset=UTF-8');
 
 $connection = connect($config);
-$id = selectDivision($connection, ($config['MINAGE'] || 24));
+$id = selectDivision($connection, $config['MINAGE'] ?? 24);
 
 print(json_encode(processDivision($id, $config, $connection)));
