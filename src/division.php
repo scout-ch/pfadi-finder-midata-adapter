@@ -68,7 +68,7 @@ function mapAgeGroups($groups) {
   if(!$groups) return '';
 
   $ageGroups = array_map(function ($group) { return ['Biber' => 0, 'Wölfe' => 1, 'Pfadi' => 2, 'Pio' => 3, 'Rover' => 4][$group['group_type']]; }, $groups);
-  $ageGroups = array_filter($ageGroups, function ($ageGroup) { return $ageGroup != null; });
+  $ageGroups = array_filter($ageGroups, function ($ageGroup) { return $ageGroup !== null; });
   $ageGroups = array_unique($ageGroups);
   return join(', ', $ageGroups);
 }
