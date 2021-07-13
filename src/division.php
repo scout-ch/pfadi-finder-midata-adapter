@@ -16,16 +16,17 @@ function updateDivision($division, $connection) {
 }
 
 function insertLocations($division, $connection) {
-  $stmt = $connection->prepare("DELETE FROM `divisions` WHERE `pbs_id` = ?");
+  $stmt = $connection->prepare("DELETE FROM `locations` WHERE `pbs_id` = ?");
   $stmt->bind_param("s", $division['id']); 
   $stmt->execute();
 
-  $stmt = $connection->prepare("INSERT INTO `locations` (`pbs_id`, `code`, `latitude`, `longitude`) VALUES (?, ?, ?)");
-
-  foreach($division['locations'] as $location) {
-    $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
-    $stmt->execute();
-    $stmt->reset();
+  if(isset($division['locations'])) {
+    $stmt = $connection->prepare("INSERT INTO `locations` (`pbs_id`, `code`, `latitude`, `longitude`) VALUES (?, ?, ?, ?)");
+    foreach($division['locations'] as $location) {
+      $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
+      $stmt->execute();
+      $stmt->reset();
+    }
   }
 }
 
@@ -34,7 +35,8 @@ function processDivision($id, $config, $connection) {
 
   $division = fetchDivision($id, $config);
   $division = transformDivisionData($division);
-
+  insertLocations($division, $connection);
+  
   return [
     'id' => $id,
     'data' => $division,
