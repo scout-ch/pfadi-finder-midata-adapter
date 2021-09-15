@@ -2,8 +2,8 @@
 include './database.php';
 include './divisionhelper.php';
 
-function getDivisions($connection) {
-  $sql = "SELECT * FROM divisions";
+function getDivisionByCode($connection, $code) {
+  $sql = "SELECT * FROM divisions WHERE code LIKE '$code' LIMIT 1";
   $result = $connection->query($sql);
 
   if ($result->num_rows > 0) {
@@ -19,11 +19,27 @@ function getDivisions($connection) {
     
     return json_encode($divisions);
   } else {
-    return "no results found";
+    return false;
   }
 }
 
+function getCodeFromURL() {
+  if (isset($_GET['code'])) {
+	// Check if input is secure
+    $match = preg_match('/[A-Z]{1,3}\d{1,3}/', $_GET['code']);
+    if($match === 1) {
+      return $_GET['code'];
+	}
+  }	
+}
+
 $connection = connect($config);
-header('Content-Type: application/json; charset=UTF-8');
-echo getDivisions($connection);
+$division = getDivisionByCode($connection, getCodeFromURL());
+if($division !== false) {
+	header('Content-Type: application/json; charset=UTF-8');
+	echo $division;
+}
+else {
+	echo "no results found";
+}
 ?>
