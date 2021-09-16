@@ -1,9 +1,11 @@
 <?php
 
-function getLocations($connection, $divisionCode) {
-  $sql_loc = "SELECT * FROM locations WHERE code = '" . $divisionCode . "'";
-  $result_loc = $connection->query($sql_loc);
-  $locations = $result_loc->fetch_all(MYSQLI_ASSOC);
+function getLocations($connection, $code) {
+  $stmt = $connection->prepare("SELECT * FROM locations WHERE code = ?");
+  $stmt->bind_param('s', $code);
+  $stmt->execute();
+  $result = $stmt->get_result();
+  $locations = $result->fetch_all(MYSQLI_ASSOC);
   
   foreach($locations as &$loc){   
     $loc["id"] = intval($loc["id"]);
@@ -14,5 +16,3 @@ function getLocations($connection, $divisionCode) {
   
   return $locations;
 }
-
-?>
