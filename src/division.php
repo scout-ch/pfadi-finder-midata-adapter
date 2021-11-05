@@ -23,11 +23,20 @@ function insertLocations($division, $connection) {
   if(isset($division['locations'])) {
     $stmt = $connection->prepare("INSERT INTO `locations` (`pbs_id`, `code`, `latitude`, `longitude`) VALUES (?, ?, ?, ?)");
     foreach($division['locations'] as $location) {
-      $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
-      $stmt->execute();
-      $stmt->reset();
+      if(locationWithinSwitzerland($location)) {
+        $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
+        $stmt->execute();
+        $stmt->reset();
+      }
     }
   }
+}
+
+function locationWithinSwitzerland($location) {
+  return GEOLOCATION_SWITZERLAND_SOUTH_LIMIT < floatval($location['lat'])
+    && GEOLOCATION_SWITZERLAND_NORTH_LIMIT > floatval($location['lat'])
+    && GEOLOCATION_SWITZERLAND_WEST_LIMIT < floatval($location['long'])
+    && GEOLOCATION_SWITZERLAND_EAST_LIMIT > floatval($location['long']);
 }
 
 function processDivision($id, $config, $connection) {
@@ -58,13 +67,20 @@ function transformDivisionData($data) {
   $division = $data['groups'][0];
 
   return [
-    'code' => $division['id'], 'name' => $division['name'], 'kv' => substr($division['pbs_shortname'], 0, 2), 
+    'code' => $division['id'], 'name' => $division['name'], 'kv' => mapKV(substr($division['pbs_shortname'], 0, 2)),
     'genders' => mapGenders($division), 'pta' => !!$division['pta'], 'website' => $division['website'], 
     'email' => $division['email'], 'agegroups' => mapAgeGroups($data['linked']['groups']), 
     'locations' => $data['linked']['geolocations'], 'id' => intval($division['id'])
   ];
 }
 
+function mapKV($shortname_sub) {
+  // For ticino there can be shortnames with the three digits "STI" in the data
+  if(strcasecmp($shortname_sub, "ST") == 0) {
+    return "TI";
+  }
+  return $shortname_sub;
+}
 
 function mapAgeGroups($groups) {
   if(!$groups) return '';
