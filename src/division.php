@@ -17,7 +17,7 @@ function updateDivision($division, $connection) {
 
 function insertLocations($division, $connection) {
   $stmt = $connection->prepare("DELETE FROM `locations` WHERE `pbs_id` = ?");
-  $stmt->bind_param("s", $division['id']); 
+  $stmt->bind_param("s", $division['id']);
   $stmt->execute();
 
   if(isset($division['locations'])) {
@@ -25,6 +25,23 @@ function insertLocations($division, $connection) {
     foreach($division['locations'] as $location) {
       if(locationWithinSwitzerland($location)) {
         $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
+        $stmt->execute();
+        $stmt->reset();
+      }
+    }
+  }
+}
+
+function insertSocialAccounts($division, $connection) {
+  $stmt = $connection->prepare("DELETE FROM `social_accounts` WHERE `code` = ?");
+  $stmt->bind_param("s", $division['id']);
+  $stmt->execute();
+
+  if(isset($division['locations'])) {
+    $stmt = $connection->prepare("INSERT INTO `social_accounts` (`code`, `url`, `type`) VALUES (?, ?, ?)");
+    foreach($division['social_accounts'] as $social_account) {
+      if($social_account['public']) {
+        $stmt->bind_param("dss", $division['id'], $social_account['name'], $social_account['label']);
         $stmt->execute();
         $stmt->reset();
       }
@@ -45,6 +62,7 @@ function processDivision($id, $config, $connection) {
   $division = fetchDivision($id, $config);
   $division = transformDivisionData($division);
   insertLocations($division, $connection);
+  insertSocialAccounts($division, $connection);
   
   return [
     'id' => $id,
@@ -70,7 +88,9 @@ function transformDivisionData($data) {
     'code' => $division['id'], 'name' => $division['name'], 'kv' => mapKV(substr($division['pbs_shortname'], 0, 2)),
     'genders' => mapGenders($division), 'pta' => !!$division['pta'], 'website' => $division['website'], 
     'email' => $division['email'], 'agegroups' => mapAgeGroups($data['linked']['groups']), 
-    'locations' => $data['linked']['geolocations'], 'id' => intval($division['id'])
+    'locations' => $data['linked']['geolocations'],
+    'social_accounts' => $data['linked']['social_accounts'],
+    'id' => intval($division['id'])
   ];
 }
 
