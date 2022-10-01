@@ -19,6 +19,7 @@ function getDivisionByCode($connection, $code) {
     unset($div["pbs_id"]);
     unset($div["updated_at"]);
     $div["locations"] = getLocations($connection, $div["code"]);
+    $div["social_accounts"] = getSocialAccounts($connection, $div["code"]);
   }
   
   return $divisions;
