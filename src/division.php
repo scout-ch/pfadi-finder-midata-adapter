@@ -37,7 +37,7 @@ function insertSocialAccounts($division, $connection) {
   $stmt->bind_param("s", $division['id']);
   $stmt->execute();
 
-  if(isset($division['locations'])) {
+  if(isset($division['social_accounts'])) {
     $stmt = $connection->prepare("INSERT INTO `social_accounts` (`code`, `url`, `type`) VALUES (?, ?, ?)");
     foreach($division['social_accounts'] as $social_account) {
       if($social_account['public']) {
