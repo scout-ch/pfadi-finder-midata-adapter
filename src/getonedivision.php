@@ -29,7 +29,7 @@ function getCodeFromURL() {
   if (isset($_GET['code'])) {
 
 	  // Check if input is secure
-    $match = preg_match('/^[a-zA-Z]{0,3}\d{1,4}$/', $_GET['code']);
+    $match = preg_match('/^[a-zA-Z]{0,3}\d{1,5}$/', $_GET['code']);
     if($match === 1) return $_GET['code'];
   }	
 }
