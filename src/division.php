@@ -2,6 +2,13 @@
 include './database.php';
 
 function updateDivision($division, $connection) {
+  // filtering deleted groups doesn't work yet -> needs deleted_at to be visible in hitobito api
+  if(isset($division['deleted_at']) && strlen($division['deleted_at']) > 0) {
+    $delstmt = $connection->prepare("DELETE FROM `divisions` WHERE pbs_id = ?;");
+    $delstmt->bind_param("d", $division['id']);
+    return $delstmt->execute();
+  }
+
   $stmt = $connection->prepare("UPDATE `divisions` SET 
                                 `name` = ?, `cantonalassociation` = ?, `gender` = ?, `pta` = ?, 
                                 `website` = ?, `agegroups` = ?, `email` = ?, `code` = ?, `updated_at` = NOW()
@@ -90,7 +97,8 @@ function transformDivisionData($data) {
     'email' => $division['email'], 'agegroups' => mapAgeGroups($data['linked']['groups']), 
     'locations' => $data['linked']['geolocations'],
     'social_accounts' => $data['linked']['social_accounts'],
-    'id' => intval($division['id'])
+    'id' => intval($division['id']),
+    'deleted_at' => $division['deleted_at']
   ];
 }
 
