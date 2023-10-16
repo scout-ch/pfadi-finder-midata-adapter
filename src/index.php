@@ -61,6 +61,7 @@ function processIndex($config, $connection) {
 
   $divisionsToRemove = array_diff($existingDivisionCodes, $divisionCodes);
   $divisionsToAdd = array_diff($divisionCodes, $existingDivisionCodes);
+  $divisionsToAdd = array_diff($divisionsToAdd, $config['EXCLUDED_GROUPS']);
   removeDivisions($divisionsToRemove, $connection);
   insertDivisions($divisionsToAdd, $connection);
 
