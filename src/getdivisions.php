@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * Returns the list of all groups in JSON format.
+ * Doesn't include any social accounts.
+ */
+
 include './database.php';
 include './divisionhelper.php';
 
