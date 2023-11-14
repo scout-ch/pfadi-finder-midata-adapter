@@ -1,4 +1,14 @@
 <?php
+
+/**
+ * Finds the group that has not been updated for the longest time in the database. Updates all the data about that 
+ * group, including locations and social accounts.
+ *
+ * This script is called by a cronjob many times a day in order to keep all groups updated. The cronjob pattern can be 
+ * something like "* 0-9 * * *" to update 10h * 60min = 600 groups per night. When we update a group, we set the date to 
+ * NOW in the 'updated_at' column. This way the processed group always lands at the end of the queue. 
+*/
+
 include './database.php';
 
 function updateDivision($division, $connection) {
