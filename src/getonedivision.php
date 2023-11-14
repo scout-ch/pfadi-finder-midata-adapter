@@ -1,4 +1,11 @@
 <?php
+
+/**
+ * Returns the group in JSON format
+ * This can be used by the pfadifinder to fetch all data about a specific group. Use this with 
+ * a GET-Parameter for the group id, e.g. https://url.ch/src/getonedivision.php?code=375
+ */
+
 include './database.php';
 include './divisionhelper.php';
 
