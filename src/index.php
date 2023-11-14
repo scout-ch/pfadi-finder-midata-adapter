@@ -1,10 +1,13 @@
 <?php
 
-/***
- Index groups: Check MiData for new groups to add. This file only creates empty entries for a group. Other data is collected in the division.php file, which is called from a cronjob
-
- Removing groups from the index only happens for hard deleted groups. Soft deleted groups are removed in the division.php file
-*/
+/**
+ * Index groups: Checks MiData for new groups to add. Creates empty entries for new groups. 
+ * Other data is collected in division.php. This file can be called by a cronjob once a day in
+ * order to have a clean index before division.php updates all the groups over the night.
+ *
+ * Removing groups from the index only happens for hard deleted groups. Soft deleted groups are
+ * removed by the division.php file
+ */
 
 include './database.php';
 
