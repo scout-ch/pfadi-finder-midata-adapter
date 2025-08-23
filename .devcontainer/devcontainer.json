@@ -17,7 +17,11 @@
     "terminal.integrated.shell.linux": "ash"
   },
   // Add the IDs of extensions you want installed when the container is created.
-  "extensions": []
+  "extensions": [],
+  "features": {
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-git:0": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-gpg:0": {}
+  }
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Uncomment the next line if you want start specific services in your Docker Compose config.

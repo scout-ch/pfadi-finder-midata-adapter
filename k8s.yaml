@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pfadifinder-midata-adapter-secrets
+type: Opaque
+stringData:
+  DATABASE_HOST: ""
+  DATABASE_USER: ""
+  DATABASE_PASSWORD: ""
+  DATABASE_DB: ""
+  TOKEN: ""
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pfadifinder-midata-adapter-app
+spec:
+  ports:
+    - port: 3000
+      targetPort: 3000
+  selector:
+    app: pfadifinder-midata-adapter-app
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pfadifinder-midata-adapter-app
+spec:
+  selector:
+    matchLabels:
+      app: pfadifinder-midata-adapter-app
+  template:
+    metadata:
+      labels:
+        app: pfadifinder-midata-adapter-app
+    spec:
+      containers:
+        - name: pfadifinder-midata-adapter-app
+          image: ghcr.io/scout-ch/pfadi-finder-midata-adapter:latest
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - secretRef:
+                name: pfadi-secrets
+          env:
+            - name: BASE_URL
+              value: "./mock"
+            - name: MINAGE
+              value: 24

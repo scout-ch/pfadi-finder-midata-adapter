@@ -17,6 +17,8 @@ services:
       TOKEN: ${TOKEN}
       BASE_URL: ${BASE_URL:-./mock}
       DEBUG: ${DEBUG:-yes}
+      MINAGE: ${MINAGE:-24}
+      # EXCLUDED_GROUPS: 666, 420
 
   db:
     image: mariadb:12.0
