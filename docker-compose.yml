@@ -19,7 +19,7 @@ services:
       DEBUG: ${DEBUG:-yes}
 
   db:
-    image: mariadb:10.11
+    image: mariadb:12.0
     environment:
       MYSQL_DATABASE: pfadi_finder
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
