@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   app:
     build: .
@@ -21,7 +19,7 @@ services:
       DEBUG: ${DEBUG:-yes}
 
   db:
-    image: mariadb:10.5
+    image: mariadb:10.11
     environment:
       MYSQL_DATABASE: pfadi_finder
       MYSQL_RANDOM_ROOT_PASSWORD: "yes"
