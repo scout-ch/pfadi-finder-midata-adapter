@@ -108,7 +108,8 @@ function transformDivisionData($data) {
     'locations' => $data['linked']['geolocations'],
     'social_accounts' => $data['linked']['social_accounts'],
     'id' => intval($division['id']),
-    'deleted_at' => $division['deleted_at']
+    'deleted_at' => $division['deleted_at'],
+    'description' => $division['description']
   ];
 }
 
