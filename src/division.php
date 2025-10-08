@@ -21,12 +21,12 @@ function updateDivision($division, $connection) {
 
   $stmt = $connection->prepare("UPDATE `divisions` SET 
                                 `name` = ?, `cantonalassociation` = ?, `gender` = ?, `pta` = ?, 
-                                `website` = ?, `agegroups` = ?, `email` = ?, `code` = ?, `updated_at` = NOW()
+                                `website` = ?, `agegroups` = ?, `email` = ?, `code` = ?, `description` = ?, `updated_at` = NOW()
                                 WHERE pbs_id = ?;");
 
-  $stmt->bind_param("ssiissssd", $division['name'], $division['kv'], $division['genders'], $division['pta'], 
+  $stmt->bind_param("ssiisssssd", $division['name'], $division['kv'], $division['genders'], $division['pta'], 
                                $division['website'], $division['agegroups'], $division['email'], $division['code'],
-                               $division['id'], );
+                               $division['description'], $division['id'], );
                     
 
   return $stmt->execute();
