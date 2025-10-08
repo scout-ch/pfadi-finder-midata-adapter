@@ -32,10 +32,6 @@ function addDescription($connection) {
   ensureColumnExists($connection, "divisions", "description", "VARCHAR(255) NULL");
 }
 
-function addDescription($connection) {
-  $connection->query("ALTER TABLE `divisions` ADD description VARCHAR(255) NULL;");
-}
-
 addUpdatedAt(connect($config));
 addPbsId(connect($config));
 addDescription(connect($config));
