@@ -12,3 +12,6 @@ This project fetches the data off midata and into a mysql database, where it is 
 
    ```sh
    docker-compose up --build
+   ```
+
+4. If the database has not been built yet, create it by running `curl localhost:5000:migrate.php`
