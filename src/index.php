@@ -15,11 +15,11 @@ function removeDivisions($ids, $connection) {
   $stmt_loc = $connection->prepare("DELETE FROM `locations` WHERE pbs_id = ?");
   $stmt_div = $connection->prepare("DELETE FROM `divisions` WHERE pbs_id = ?");
 
-  foreach($ids as $id) {
-    $stmt_loc->bind_param("s", $id); 
+  foreach ($ids as $id) {
+    $stmt_loc->bind_param("s", $id);
     $stmt_loc->execute();
     $stmt_loc->reset();
-    $stmt_div->bind_param("s", $id); 
+    $stmt_div->bind_param("s", $id);
     $stmt_div->execute();
     $stmt_div->reset();
   }
@@ -29,10 +29,10 @@ function insertDivisions($ids, $connection) {
   $stmt = $connection->prepare("INSERT INTO `divisions` (`pbs_id`, `code`, `name`, `cantonalassociation`, `gender`, `pta`, `mainpostalcode`, `allpostalcodes`) 
                                 VALUES (?, ?, '', '', 0, 0, '', '')");
 
-  foreach($ids as $id) {
+  foreach ($ids as $id) {
     $stmt->bind_param("ds", $id, $id);
-    
-    if(!$stmt->execute()) error_log($connection->error);
+
+    if (!$stmt->execute()) error_log($connection->error);
     $stmt->reset();
   }
 }
@@ -40,10 +40,10 @@ function insertDivisions($ids, $connection) {
 function fetchIndex($config) {
   $query = $config['TOKEN'] ? "?token=" . $config['TOKEN'] : "";
   $url = $config['BASE_URL'] . "/de/list_groups.json" . $query;
-  error_log("Requesting division index at $url", 0);
+  print("Requesting division index at $url");
   $data = file_get_contents($url);
 
-  if($data) return json_decode($data, true);
+  if ($data) return json_decode($data, true);
 }
 
 function existingDivisionsCodes($connection) {
@@ -51,13 +51,13 @@ function existingDivisionsCodes($connection) {
 }
 
 function array_flatten($items) {
-    if (! is_array($items)) {
-        return [$items];
-    }
+  if (! is_array($items)) {
+    return [$items];
+  }
 
-    return array_reduce($items, function ($carry, $item) {
-        return array_merge($carry, array_flatten($item));
-    }, []);
+  return array_reduce($items, function ($carry, $item) {
+    return array_merge($carry, array_flatten($item));
+  }, []);
 }
 
 function processIndex($config, $connection) {
@@ -65,7 +65,7 @@ function processIndex($config, $connection) {
   $divisionIndex = fetchIndex($config);
   $divisionCodes = [];
 
-  foreach($divisionIndex['groups'] as $divisionListing) {
+  foreach ($divisionIndex['groups'] as $divisionListing) {
     if ($divisionListing['type'] == 'Group::Abteilung') $divisionCodes[] = $divisionListing['id'];
   }
 
