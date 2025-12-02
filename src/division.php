@@ -119,7 +119,6 @@ function processDivision($id, $config, $connection) {
 function fetchDivision($id, $config) {
   $query = $config['TOKEN'] ? "?token=" . $config['TOKEN'] : "";
   $url = $config['BASE_URL'] . "/de/groups/$id.json" . $query;
-  print("Requesting division $id at $url");
   $data = file_get_contents($url);
 
   if ($data) return json_decode($data, true);

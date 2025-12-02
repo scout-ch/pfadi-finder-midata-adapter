@@ -40,7 +40,6 @@ function insertDivisions($ids, $connection) {
 function fetchIndex($config) {
   $query = $config['TOKEN'] ? "?token=" . $config['TOKEN'] : "";
   $url = $config['BASE_URL'] . "/de/list_groups.json" . $query;
-  print("Requesting division index at $url");
   $data = file_get_contents($url);
 
   if ($data) return json_decode($data, true);
