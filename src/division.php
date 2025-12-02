@@ -1,19 +1,14 @@
 <?php
 
 /**
- * Finds the group that has not been updated for the longest time in the database. Updates all the data about that 
- * group, including locations and social accounts.
- *
- * This script is called by a cronjob many times a day in order to keep all groups updated. The cronjob pattern can be 
- * something like "* 0-9 * * *" to update 10h * 60min = 600 groups per night. When we update a group, we set the date to 
- * NOW in the 'updated_at' column. This way the processed group always lands at the end of the queue. 
-*/
+ * Provides the functions required to update divisions based on the connection database
+ */
 
 include './database.php';
 
 function updateDivision($division, $connection) {
   // filtering deleted groups doesn't work yet -> needs deleted_at to be visible in hitobito api
-  if(isset($division['deleted_at']) && strlen($division['deleted_at']) > 0) {
+  if (isset($division['deleted_at']) && strlen($division['deleted_at']) > 0) {
     $delstmt = $connection->prepare("DELETE FROM `divisions` WHERE pbs_id = ?;");
     $delstmt->bind_param("d", $division['id']);
     return $delstmt->execute();
@@ -24,10 +19,19 @@ function updateDivision($division, $connection) {
                                 `website` = ?, `agegroups` = ?, `email` = ?, `code` = ?, `description` = ?, `updated_at` = NOW()
                                 WHERE pbs_id = ?;");
 
-  $stmt->bind_param("ssiisssssd", $division['name'], $division['kv'], $division['genders'], $division['pta'], 
-                               $division['website'], $division['agegroups'], $division['email'], $division['code'],
-                               $division['description'], $division['id'], );
-                    
+  $stmt->bind_param(
+    "ssiisssssd",
+    $division['name'],
+    $division['kv'],
+    $division['genders'],
+    $division['pta'],
+    $division['website'],
+    $division['agegroups'],
+    $division['email'],
+    $division['code'],
+    $division['description'],
+    $division['id'],
+  );
 
   return $stmt->execute();
 }
@@ -37,10 +41,10 @@ function insertLocations($division, $connection) {
   $stmt->bind_param("s", $division['id']);
   $stmt->execute();
 
-  if(isset($division['locations'])) {
+  if (isset($division['locations'])) {
     $stmt = $connection->prepare("INSERT INTO `locations` (`pbs_id`, `code`, `latitude`, `longitude`) VALUES (?, ?, ?, ?)");
-    foreach($division['locations'] as $location) {
-      if(locationWithinSwitzerland($location)) {
+    foreach ($division['locations'] as $location) {
+      if (locationWithinSwitzerland($location)) {
         $stmt->bind_param("dsdd", $division['id'], $division['code'], $location['lat'], $location['long']);
         $stmt->execute();
         $stmt->reset();
@@ -54,10 +58,10 @@ function insertSocialAccounts($division, $connection) {
   $stmt->bind_param("s", $division['id']);
   $stmt->execute();
 
-  if(isset($division['social_accounts'])) {
+  if (isset($division['social_accounts'])) {
     $stmt = $connection->prepare("INSERT INTO `social_accounts` (`code`, `url`, `type`) VALUES (?, ?, ?)");
-    foreach($division['social_accounts'] as $social_account) {
-      if($social_account['public']) {
+    foreach ($division['social_accounts'] as $social_account) {
+      if ($social_account['public']) {
         $stmt->bind_param("dss", $division['id'], $social_account['name'], $social_account['label']);
         $stmt->execute();
         $stmt->reset();
@@ -73,14 +77,37 @@ function locationWithinSwitzerland($location) {
     && GEOLOCATION_SWITZERLAND_EAST_LIMIT > floatval($location['long']);
 }
 
+function processDivisions($config, $connection, $seconds_between_fetch) {
+  $divisions = getDivisions($connection);
+  $res = array("success" => 0, "failure" => 0, "errors" => array());
+
+  foreach ($divisions as $division) {
+    $process = processDivision($division, $config, $connection);
+    $ok = $process["ok"];
+    if ($ok == "true") {
+      $res["success"] += 1;
+    } else {
+      $res["failure"] += 1;
+      $res["error"][$process["id"]] = array(
+        "error" => $process["error"],
+        "data" => $process["data"]
+      );
+    }
+
+    usleep(((int)round($seconds_between_fetch * 1000000)));
+  }
+
+  return $res;
+}
+
 function processDivision($id, $config, $connection) {
-  if($id == null || $id == '') return false;
+  if ($id == null || $id == '') return false;
 
   $division = fetchDivision($id, $config);
   $division = transformDivisionData($division);
   insertLocations($division, $connection);
   insertSocialAccounts($division, $connection);
-  
+
   return [
     'id' => $id,
     'data' => $division,
@@ -95,37 +122,53 @@ function fetchDivision($id, $config) {
   error_log("Requesting division $id at $url", 0);
   $data = file_get_contents($url);
 
-  if($data) return json_decode($data, true);
+  if ($data) return json_decode($data, true);
 }
 
 function transformDivisionData($data) {
   $division = $data['groups'][0];
 
   return [
-    'code' => $division['id'], 'name' => $division['name'], 'kv' => mapKV(substr($division['pbs_shortname'], 0, 2)),
-    'genders' => mapGenders($division), 'pta' => !!$division['pta'], 'website' => $division['website'], 
-    'email' => $division['email'], 'agegroups' => mapAgeGroups($data['linked']['groups']), 
-    'locations' => $data['linked']['geolocations'],
-    'social_accounts' => $data['linked']['social_accounts'],
+    'code' => $division['id'],
+    'name' => $division['name'],
+    'kv' => getKV($division),
+    'genders' => mapGenders($division),
+    'pta' => !!$division['pta'],
+    'website' => $division['website'],
+    'email' => $division['email'],
+    'agegroups' => mapAgeGroups($data['linked']['groups']),
+    'locations' => $data['linked']['geolocations'] ?? null,
+    'social_accounts' => $data['linked']['social_accounts'] ?? null,
     'id' => intval($division['id']),
     'deleted_at' => $division['deleted_at'],
     'description' => $division['description']
   ];
 }
 
+function getKV($division) {
+  if (array_key_exists('pbs_shortname', $division) && is_string($division['pbs_shortname'])) {
+    return mapKV(substr($division['pbs_shortname'], 0, 2));
+  }
+  return "-";
+}
+
 function mapKV($shortname_sub) {
   // For ticino there can be shortnames with the three digits "STI" in the data
-  if(strcasecmp($shortname_sub, "ST") == 0) {
+  if (strcasecmp($shortname_sub, "ST") == 0) {
     return "TI";
   }
   return $shortname_sub;
 }
 
 function mapAgeGroups($groups) {
-  if(!$groups) return '';
+  if (!$groups) return '';
 
-  $ageGroups = array_map(function ($group) { return ['Biber' => 0, 'Wölfe' => 1, 'Pfadi' => 2, 'Pio' => 3, 'Rover' => 4][$group['group_type']]; }, $groups);
-  $ageGroups = array_filter($ageGroups, function ($ageGroup) { return $ageGroup !== null; });
+  $ageMap = ['Biber' => 0, 'Wölfe' => 1, 'Pfadi' => 2, 'Pio' => 3, 'Rover' => 4];
+  $ageGroups = array_map(function ($group) use ($ageMap) {
+    return $ageMap[$group['group_type']];
+  }, array_filter($groups, function ($group) use ($ageMap) {
+    return isset($ageMap[$group['group_type']]);
+  }));
   $ageGroups = array_unique($ageGroups);
   return join(', ', $ageGroups);
 }
@@ -140,12 +183,19 @@ function selectDivision($connection, $minage) {
   return intval($connection->query("SELECT `pbs_id` FROM `divisions` 
                                     WHERE `updated_at` IS NULL
                                     OR `updated_at` < DATE_SUB(NOW(), INTERVAL $minage HOUR) 
-                                    ORDER BY RAND() LIMIT 1;")->fetch_row()[0]) ;
+                                    ORDER BY RAND() LIMIT 1;")->fetch_row()[0]);
 }
 
-header('Content-Type: application/json; charset=UTF-8');
+function array_flatten($items) {
+  if (! is_array($items)) {
+    return [$items];
+  }
 
-$connection = connect($config);
-$id = selectDivision($connection, $config['MINAGE'] ?? 24);
+  return array_reduce($items, function ($carry, $item) {
+    return array_merge($carry, array_flatten($item));
+  }, []);
+}
 
-print(json_encode(processDivision($id, $config, $connection)));
+function getDivisions($connection) {
+  return array_flatten($connection->query("SELECT `pbs_id` FROM `divisions`;")->fetch_all(MYSQLI_NUM));
+}
