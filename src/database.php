@@ -17,6 +17,7 @@
 */
 
 include './config.php';
+include './auth.php';
 
 function connect($config) {
   $connection = mysqli_connect(

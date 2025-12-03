@@ -9,7 +9,9 @@ $config = [
   'DATABASE_DB' => $_ENV['DATABASE_DB'],
   'DATABASE_PORT' => $_ENV['DATABASE_PORT'],
   'MINAGE' => $_ENV['MINAGE'],
-  'EXCLUDED_GROUPS' => array(explode(",", $_ENV['EXCLUDED_GROUPS']))
+  'EXCLUDED_GROUPS' => array(explode(",", $_ENV['EXCLUDED_GROUPS'])),
+  'AUTH_USER' => $_ENV['AUTH_USER'],
+  'AUTH_PASSWORD' => $_ENV['AUTH_PASSWORD']
 ];
 
 define("GEOLOCATION_SWITZERLAND_NORTH_LIMIT", 47.811263);

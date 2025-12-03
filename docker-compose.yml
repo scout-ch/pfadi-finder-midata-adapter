@@ -14,10 +14,13 @@ services:
       DATABASE_USER: pf
       DATABASE_PASSWORD: pf
       DATABASE_DB: pfadi_finder
+      DATABASE_PORT: 3306
       TOKEN: ${TOKEN}
       BASE_URL: ${BASE_URL:-./mock}
       DEBUG: ${DEBUG:-yes}
       MINAGE: ${MINAGE:-24}
+      AUTH_USER: user
+      AUTH_PASSWORD: password
       # EXCLUDED_GROUPS: 666, 420
 
   db:
