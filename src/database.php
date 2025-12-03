@@ -17,7 +17,10 @@
 */
 
 include './config.php';
-include './auth.php';
+
+if ($config['USE_BASIC_AUTH']) {
+  include './auth.php';
+}
 
 function connect($config) {
   $connection = mysqli_connect(

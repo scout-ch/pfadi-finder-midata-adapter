@@ -10,6 +10,7 @@ $config = [
   'DATABASE_PORT' => $_ENV['DATABASE_PORT'],
   'MINAGE' => $_ENV['MINAGE'],
   'EXCLUDED_GROUPS' => array(explode(",", $_ENV['EXCLUDED_GROUPS'])),
+  'USE_BASIC_AUTH' => $_ENV['USE_BASIC_AUTH'],
   'AUTH_USER' => $_ENV['AUTH_USER'],
   'AUTH_PASSWORD' => $_ENV['AUTH_PASSWORD']
 ];
