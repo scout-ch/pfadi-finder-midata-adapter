@@ -18,7 +18,7 @@
 
 include './config.php';
 
-if ($config['USE_BASIC_AUTH']) {
+if ($config['USE_BASIC_AUTH'] === "yes") {
   include './auth.php';
 }
 
