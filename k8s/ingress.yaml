@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pfadi-finder-midata-adapter
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure # necessary, since we have multiple entrypoints
+    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+
+spec:
+  rules:
+    - host: pfadi-finder-midata-adapter.scout.ch
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pfadi-finder-midata-adapter
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - pfadi-finder-midata-adapter.scout.ch
