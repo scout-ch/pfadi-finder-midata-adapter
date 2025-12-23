@@ -4,7 +4,7 @@ metadata:
   name: pfadi-finder-midata-adapter
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure # necessary, since we have multiple entrypoints
-    traefik.ingress.kubernetes.io/router.tls.certresolver: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt
 
 spec:
   rules:
@@ -21,3 +21,4 @@ spec:
   tls:
     - hosts:
         - pfadi-finder-midata-adapter.scout.ch
+      secretName: tls-cert
