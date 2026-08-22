@@ -38,3 +38,37 @@ spec:
               value: "24"
             - name: "USE_BASIC_AUTH"
               value: "no"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: refresh-pfadifinder-midata-adapter-division-data
+spec:
+  schedule: "0 */24 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: refresh-data
+            image: curlimages/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - http://pfadi-finder-midata-adapter.svc:3000/src/updatedivisions.php
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: refresh-pfadifinder-midata-adapter-divisions
+spec:
+  schedule: "0 0 */7 * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: refresh-data
+            image: curlimages/curl:latest
+            imagePullPolicy: IfNotPresent
+            command:
+            - http://pfadi-finder-midata-adapter.svc:3000/src/index.php
