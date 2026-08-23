@@ -44,7 +44,7 @@ kind: CronJob
 metadata:
   name: refresh-pfadifinder-midata-adapter-division-data
 spec:
-  schedule: "0 */24 * * *"
+  schedule: "15 */24 * * *"
   jobTemplate:
     spec:
       template:
@@ -59,9 +59,9 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: refresh-pfadifinder-midata-adapter-divisions
+  name: refresh-pfadifinder-midata-adapter-divisions-index
 spec:
-  schedule: "0 0 */7 * *"
+  schedule: "0 */24 * * *"
   jobTemplate:
     spec:
       template:
