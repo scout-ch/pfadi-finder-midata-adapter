@@ -11,7 +11,14 @@ spec:
     - host: pfadi-finder-midata-adapter.scout.ch
       http:
         paths:
-          - path: /
+          - path: /src/getdivisions.php
+            pathType: Prefix
+            backend:
+              service:
+                name: pfadi-finder-midata-adapter
+                port:
+                  number: 80
+          - path: /src/getonedivision.php
             pathType: Prefix
             backend:
               service:
