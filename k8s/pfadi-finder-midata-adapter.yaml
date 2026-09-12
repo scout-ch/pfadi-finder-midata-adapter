@@ -55,6 +55,7 @@ spec:
             imagePullPolicy: IfNotPresent
             command:
             - http://pfadi-finder-midata-adapter.svc:3000/src/updatedivisions.php
+          restartPolicy: Never
 ---
 apiVersion: batch/v1
 kind: CronJob
@@ -72,3 +73,4 @@ spec:
             imagePullPolicy: IfNotPresent
             command:
             - http://pfadi-finder-midata-adapter.svc:3000/src/index.php
+          restartPolicy: Never
