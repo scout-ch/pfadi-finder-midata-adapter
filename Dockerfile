@@ -1,4 +1,4 @@
-FROM php:8.4-alpine
+FROM php:8.5-alpine
 RUN docker-php-ext-install mysqli
 
 COPY src src
