@@ -53,8 +53,8 @@ spec:
           - name: refresh-data
             image: curlimages/curl:latest
             imagePullPolicy: IfNotPresent
-            command:
-            - http://pfadi-finder-midata-adapter.svc:3000/src/updatedivisions.php
+            args:
+            - http://pfadi-finder-midata-adapter/src/updatedivisions.php
           restartPolicy: Never
 ---
 apiVersion: batch/v1
@@ -71,6 +71,6 @@ spec:
           - name: refresh-data
             image: curlimages/curl:latest
             imagePullPolicy: IfNotPresent
-            command:
-            - http://pfadi-finder-midata-adapter.svc:3000/src/index.php
+            args:
+            - http://pfadi-finder-midata-adapter/src/index.php
           restartPolicy: Never
